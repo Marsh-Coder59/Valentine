@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tony ❤️ Janet</title>
+<link rel="manifest" href="manifest.json">
+
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#ff4b5c,#ff9a9e);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+.card{
+background:white;
+width:92%;
+max-width:420px;
+padding:20px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 0 20px rgba(0,0,0,0.2);
+position:relative;
+}
+
+h2{color:#ff2e55;}
+
+.photos img{
+width:80px;height:80px;border-radius:50%;
+margin:5px;object-fit:cover;
+}
+
+button{
+padding:12px 22px;
+font-size:17px;
+border:none;
+border-radius:10px;
+margin:8px;
+cursor:pointer;
+}
+
+#yes{background:#ff2e55;color:white;transition:0.3s;}
+#no{background:#ddd;position:absolute;}
+
+.scene-emoji{
+font-size:70px;
+margin:12px 0;
+transition:0.3s;
+}
+
+/* FUNNY ANIMATIONS */
+
+.bounce{animation:bounce .6s infinite alternate;}
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-15px);}}
+
+.spin{animation:spin 1s linear infinite;}
+@keyframes spin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+
+.travel{
+animation:travel 2s linear infinite;
+}
+
+@keyframes travel{
+0%{transform:translateX(-40px);}
+50%{transform:translateX(40px);}
+100%{transform:translateX(-40px);}
+}
+
+
+.shake{animation:shake .3s infinite;}
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(6px);}
+50%{transform:translateX(-6px);}
+75%{transform:translateX(6px);}
+100%{transform:translateX(0);}
+}
+
+/* Fireworks */
+
+.firework{
+position:fixed;
+width:6px;height:6px;
+border-radius:50%;
+animation:explode 1s ease-out forwards;
+}
+
+@keyframes explode{
+to{transform:translate(var(--x),var(--y));opacity:0;}
+}
+
+.letter{text-align:left;line-height:1.5;min-height:120px;}
+</style>
+</head>
+
+<body>
+
+<audio autoplay loop>
+<source src="music.mp3">
+</audio>
+
+<audio id="voice">
+<source src="voice.mp3">
+</audio>
+
+<div class="card" id="card">
+
+<h2 id="q">Janet 😊 do you remember our first Valentine?</h2>
+
+<div id="anim" class="scene-emoji bounce">🧸</div>
+
+<div class="photos">
+<img src="her.jpg.jpg">
+<img src="me.jpg.jpg">
+</div>
+
+<div>
+<button id="yes">Yes ❤️</button>
+<button id="no">No</button>
+</div>
+
+</div>
+
+<script>
+
+let questions=[
+"Janet 😊 do you remember our first Valentine I barely knew you at the time 😄",
+"Are you smiling right now? Because I am 😄",
+"I can't wait to come to Kisumu to see you ❤️",
+"I hope you know Tony loves you deeply? 💞",
+"Ready for the real question babe? 👀",
+"Will you be my Valentine again, Janet? 💖"
+];
+
+let i=0,size=1;
+
+const q=document.getElementById("q");
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const anim=document.getElementById("anim");
+const card=document.getElementById("card");
+const voice=document.getElementById("voice");
+
+/* NO button escapes (phone + mouse) */
+function escapeNo(){
+no.style.position="fixed";
+no.style.left=Math.random()*(window.innerWidth-100)+"px";
+no.style.top=Math.random()*(window.innerHeight-60)+"px";
+}
+no.addEventListener("mouseover",escapeNo);
+no.addEventListener("touchstart",escapeNo);
+
+no.onclick=()=>{
+size+=0.25;
+yes.style.transform=`scale(${size})`;
+if(size>2.5) no.style.display="none";
+};
+
+/* YES button logic with different funny animation */
+yes.onclick=()=>{
+i++;
+
+if(i<questions.length){
+q.innerText=questions[i];
+anim.className="scene-emoji";
+
+if(i==1){anim.innerHTML="😄";anim.classList.add("spin");}
+else if(i==2){
+anim.innerHTML="🧍‍♂️";
+anim.classList.add("travel");
+}
+else if(i==3){anim.innerHTML="😍";anim.classList.add("bounce");}
+else if(i==4){anim.innerHTML="🥰";anim.classList.add("shake");}
+else{anim.innerHTML="💖";anim.classList.add("bounce");}
+
+}else showLetter();
+};
+
+/* LOVE LETTER SCREEN */
+function showLetter(){
+voice.play();
+
+let text=`Janet,
+
+From the first day you entered my life, everything changed.
+You stayed with me even when life tested our limits so always know that I appreciate and love you a lot babe.
+
+This is our second Valentine, and my love keeps growing stronger.
+
+I can't wait to come to Kisumu to see you soon.
+You are my peace, my happiness, and my favorite person in this world, 
+I'll not get tired of telling you that.
+
+Janet, will you keep being my Valentine — today, tomorrow, and always?
+
+Remember what I told you that i'd do to you when you have a dera,.. 
+It's still on my mind 😄😄
+
+Forever yours,
+Tony ❤️`;
+
+card.innerHTML=`
+<h2>For You Janet ❤️</h2>
+<div id="type" class="letter"></div>
+<br>
+<h3 id="countdown"></h3>
+<button onclick="celebrate()" style="background:#ff2e55;color:white;">Yes, Always ❤️</button>
+`;
+
+typeText(text);
+countdown();
+}
+
+/* TYPING EFFECT */
+function typeText(text){
+let el=document.getElementById("type");
+let i=0;
+(function typing(){
+if(i<text.length){
+el.innerHTML+=text.charAt(i);
+i++;
+setTimeout(typing,100);
+}
+})();
+}
+
+/* COUNTDOWN */
+function countdown(){
+let target=new Date("Feb 14, 2026 00:00:00:00").getTime();
+let el=document.getElementById("countdown");
+
+setInterval(()=>{
+let now=new Date().getTime();
+let d=target-now;
+
+let days=Math.floor(d/(1000*60*60*24));
+let hrs=Math.floor((d%(1000*60*60*24))/(1000*60*60));
+let min=Math.floor((d%(1000*60*60))/(1000*60));
+let sec=Math.floor((d%(1000*60))/(1000));
+
+el.innerText=`Counting down to Valentine ❤️ ${days}d ${hrs}h ${min}m ${sec}s`;
+},1000);
+}
+
+/* FINAL HUG + KISS SCENE */
+function celebrate(){
+
+card.innerHTML=`
+<h2>Tony ❤️ Janet</h2>
+<div id="scene" class="scene-emoji">🧍‍♂️     🧍‍♀️</div>
+<h3 id="msg">Coming closer...</h3>
+`;
+
+let step=0;
+
+let interval=setInterval(()=>{
+let scene=document.getElementById("scene");
+let msg=document.getElementById("msg");
+
+step++;
+
+if(step==1){scene.innerHTML="🧍‍♂️   🧍‍♀️";msg.innerText="Closer ❤️";}
+else if(step==2){scene.innerHTML="🧍‍♂️ 🧍‍♀️";msg.innerText="Almost there 💞";}
+else if(step==3){scene.innerHTML="🫂";msg.innerText="There we go ❤️";}
+else if(step==4){scene.innerHTML="💏";msg.innerText="Now kiss me baby😄 💋";}
+else{
+scene.innerHTML="";
+msg.innerText="Tony ❤️ Janet — Forever";
+clearInterval(interval);
+fireworks();
+}
+},2500);
+}
+
+/* FIREWORKS */
+function fireworks(){
+for(let i=0;i<90;i++){
+let f=document.createElement("div");
+f.className="firework";
+f.style.left="50vw";
+f.style.top="50vh";
+f.style.background=`hsl(${Math.random()*360},100%,50%)`;
+f.style.setProperty("--x",(Math.random()*500-250)+"px");
+f.style.setProperty("--y",(Math.random()*500-250)+"px");
+document.body.appendChild(f);
+}
+}
+
+</script>
+
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>
